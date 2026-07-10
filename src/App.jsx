@@ -1,6 +1,6 @@
 import StudyMode from "./components/StudyMode";
 import "./App.css";
-import {Mail, MessageCircle, Link2, GitBranch, Globe, Heart, ExternalLink} from "lucide-react";
+import {Mail, MessageCircle, Linkedin, Github, Globe} from "lucide-react";
 
 export default function App() {
   return (
@@ -22,9 +22,8 @@ export default function App() {
           {[
             { Icon: Mail, href: "mailto:nadiahossy426@gmail.com" },
             { Icon: MessageCircle, href: "https://wa.me/201064943439" },
-            { Icon: Link2, href: "https://linkedin.com/in/nadiahossny" },
-            { Icon: GitBranch, href: "https://github.com/nadiahossny" },
-            { Icon: ExternalLink, href: "https://www.behance.net/nadiahossny" },
+            { Icon: Linkedin, href: "https://linkedin.com/in/nadiahossny" },
+            { Icon: Github, href: "https://github.com/nadiahossny" },
             { Icon: Globe, href: "https://nadiahossny.vercel.app" },
           ].map(({ Icon, href }, i) => (
             <a
@@ -40,7 +39,7 @@ export default function App() {
         </div>
 
         <p className="footer-copyright">
-          © 2026 Nadia Hossny. Made with <Heart size={14} className="footer-heart" />
+          © 2026 Nadia Hossny. Made with <span className="footer-heart">💖</span>
         </p>
       </footer>
     </div>

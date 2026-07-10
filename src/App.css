@@ -437,6 +437,7 @@ body {
 .footer-heart {
   color: #db2777; /* Deep pink heart */
   font-size: 0.9rem;
+  display: inline-block;
   animation: beat 2s infinite ease-in-out;
 }
 
