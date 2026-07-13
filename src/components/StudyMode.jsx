@@ -8,18 +8,26 @@ import rainS from '../assets/sounds/rain.mp3';
 import forestS from '../assets/sounds/forest.mp3';
 import oceanS from '../assets/sounds/ocean.mp3';
 
+import mountainIcon from '../assets/snow-capped.svg';
+import oceanIcon from '../assets/wave.svg';
+import forestIcon from '../assets/evergreen.svg';
+import rainIcon from '../assets/cloud.svg';
+import speakerIcon from '../assets/speaker.svg';
+import highVolumeIcon from '../assets/high-volume.svg';
+import headphoneIcon from '../assets/headphone.svg';
+
 const SCENES = {
-  mountain: { id: 'mountain', soundId: 'mountain', label: 'View', icon: '🏔️' },
-  ocean:    { id: 'ocean',    soundId: 'ocean', label: 'Ocean', icon: '🌊' },
-  forest:   { id: 'forest',   soundId: 'forest', label: 'Forest', icon: '🌲' },
-  rain:     { id: 'rain',     soundId: 'rain', label: 'Rain',   icon: '🌧️' } 
+  mountain: { id: 'mountain', soundId: 'mountain', label: 'View', icon: mountainIcon },
+  ocean:    { id: 'ocean',    soundId: 'ocean', label: 'Ocean', icon: oceanIcon },
+  forest:   { id: 'forest',   soundId: 'forest', label: 'Forest', icon: forestIcon },
+  rain:     { id: 'rain',     soundId: 'rain', label: 'Rain',   icon: rainIcon } 
 };
 
 const NOISES = [
-  { id: 'mountain', title: 'Mountain Wind Noise', icon: '🏔️', desc: 'For deep focus' },
-  { id: 'ocean', title: 'Ocean Waves', icon: '🌊', desc: 'Soothing' },
-  { id: 'forest', title: 'Forest Bird Noise', icon: '🌲', desc: 'Calming' },
-  { id: 'rain', title: 'Rainfall', icon: '🌧️', desc: 'Relaxing' }
+  { id: 'mountain', title: 'Mountain Wind Noise', icon: mountainIcon, desc: 'For deep focus' },
+  { id: 'ocean', title: 'Ocean Waves', icon: oceanIcon, desc: 'Soothing' },
+  { id: 'forest', title: 'Forest Bird Noise', icon: forestIcon, desc: 'Calming' },
+  { id: 'rain', title: 'Rainfall', icon: rainIcon, desc: 'Relaxing' }
 ];
 
 export default function StudyMode({ name }) {
@@ -100,7 +108,7 @@ export default function StudyMode({ name }) {
                 className={`dock-btn ${currentScene === scene.id ? 'active' : ''}`}
                 onClick={() => handleSceneChange(scene.id)}
               >
-                <span className="dock-icon">{scene.icon}</span>
+                <img src={scene.icon} alt={scene.label} className="dock-icon" style={{ width: '1em', height: '1em' }} />
                 <span>{scene.label}</span>
               </button>
             ))}
@@ -108,13 +116,13 @@ export default function StudyMode({ name }) {
             <div className="dock-divider"></div>
 
             <button className={`dock-btn ${isMuted ? 'active' : ''}`} onClick={toggleMute}>
-              <span className="dock-icon">{isMuted ? '🔇' : '🔉'}</span>
+              <img src={isMuted ? speakerIcon : highVolumeIcon} alt={isMuted ? 'Unmute' : 'Mute'} className="dock-icon" style={{ width: '1em', height: '1em' }} />
               <span>{isMuted ? 'Unmute' : 'Mute'}</span>
             </button>
 
             {/* UPDATED: Renamed to Controller */}
             <button className={`dock-btn ${menuOpen ? 'active' : ''}`} onClick={() => setMenuOpen(true)}>
-              <span className="dock-icon">🎧</span>
+              <img src={headphoneIcon} alt="Controller" className="dock-icon" style={{ width: '1em', height: '1em' }} />
               <span>Controller</span>
             </button>
 

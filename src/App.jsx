@@ -2,6 +2,8 @@ import StudyMode from "./components/StudyMode";
 import "./App.css";
 import {Mail, MessageCircle, Globe} from "lucide-react";
 
+import brandIcon from "./assets/brandicon.svg";
+
 const Linkedin = ({ size = 24 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -43,7 +45,7 @@ export default function App() {
       {/* Header */}
       <header className="header">
         <div className="header-brand">
-          <span className="brand-icon">🍃</span>
+          <img src={brandIcon} alt="Brand Icon" className="brand-icon" style={{ width: '1.2em', height: '1.2em' }} />
           <span className="brand-name">AuraLeaf</span>
         </div>
       </header>
@@ -74,7 +76,7 @@ export default function App() {
         </div>
 
         <p className="footer-copyright">
-          © 2026 Nadia Hossny. Made with <span className="footer-heart">💖</span>
+          © 2025 Nadia Hossny.
         </p>
       </footer>
     </div>

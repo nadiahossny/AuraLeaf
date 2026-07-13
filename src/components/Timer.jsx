@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+import beverageIcon from '../assets/beverage.svg';
+import brainIcon from '../assets/brain.svg';
+
 export default function Timer() {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
@@ -70,7 +73,7 @@ export default function Timer() {
       {/* NEW: Enhanced Switch Button */}
       <div className="mode-toggle-container">
         <button className="btn-mode-switch" onClick={switchMode}>
-          <span className="icon">{mode === 'focus' ? '☕' : '🧠'}</span>
+          <img src={mode === 'focus' ? beverageIcon : brainIcon} alt="Mode Icon" className="icon" style={{ width: '1.2em', height: '1.2em' }} />
           <span>Switch to {mode === 'focus' ? 'Short Break' : 'Deep Focus'}</span>
         </button>
       </div>

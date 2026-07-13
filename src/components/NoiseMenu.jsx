@@ -15,7 +15,7 @@ function NoiseMenu({ onClose, playingId, toggleSound, volume, setVolume, noises 
           {noises.map((noise) => (
             <div key={noise.id} className="noise-item">
               <div className="noise-info">
-                <span className="noise-icon" style={{ fontSize: '1.5rem', marginRight: '10px' }}>{noise.icon}</span>
+                <img src={noise.icon} alt={noise.title} className="noise-icon" style={{ width: '1.5rem', height: '1.5rem', marginRight: '10px' }} />
                 <div>
                   <h3 className="noise-name">{noise.title}</h3>
                   <p className="noise-desc">{noise.desc}</p>
