@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import Draggable from 'react-draggable';
 import NoiseMenu from "./NoiseMenu";
 import Timer from "./Timer";
@@ -45,9 +44,10 @@ const WaterRippleBackground = ({ imageUrl, overlay, isRippleEnabled }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    if (isRippleEnabled && containerRef.current && window.$) {
+    const currentContainer = containerRef.current;
+    if (isRippleEnabled && currentContainer && window.$) {
       try {
-        window.$(containerRef.current).ripples({
+        window.$(currentContainer).ripples({
           resolution: 384, // Mid-viscosity (between water and thick gel)
           dropRadius: 25, // Slightly larger drop for a heavier feel
           perturbance: 0.015, // Smooth, honey-like refraction
@@ -59,9 +59,9 @@ const WaterRippleBackground = ({ imageUrl, overlay, isRippleEnabled }) => {
     }
 
     return () => {
-      if (containerRef.current && window.$) {
+      if (currentContainer && window.$) {
         try {
-          window.$(containerRef.current).ripples('destroy');
+          window.$(currentContainer).ripples('destroy');
         } catch (e) {}
       }
     };
