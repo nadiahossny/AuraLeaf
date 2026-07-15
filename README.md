@@ -1,7 +1,7 @@
 # AuraLeaf
 
 AuraLeaf is a heartfelt React app designed as a birthday gift experience and a calming study companion. A peaceful focus environment featuring ambient sounds, a timer, and a soft, welcoming interface.
-![AuraLeaf Preview](src/assets/2.png)
+![AuraLeaf Preview](src/assets/5.png)
 
 ## ✨ Features
 
