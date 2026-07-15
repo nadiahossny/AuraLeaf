@@ -10,6 +10,10 @@ AuraLeaf is a heartfelt React app designed as a birthday gift experience and a c
 - Relaxing ambient sound scenes such as mountain wind, ocean waves, forest birds, and rain
 - Study timer and focus-friendly controls
 - Clean, modern UI built with React
+- **New:** Interactive Sticky Notes widget for quick thoughts
+- **New:** YouTube Widget for integrated video and music playback
+- **New:** Draggable Docked Interface Layout for a highly customizable workspace
+- **New:** Stunning Viscous Liquid Effect animations
 
 ## 🛠️ Tech Stack
 
@@ -18,6 +22,10 @@ AuraLeaf is a heartfelt React app designed as a birthday gift experience and a c
 - CSS
 - Lucide React icons
 - HTML5 audio for ambient sound playback
+
+## 🌐 Deployment
+
+Live demo: https://auraleaf.vercel.app/
 
 ## ▶️ Getting Started
 
@@ -35,7 +43,7 @@ AuraLeaf is a heartfelt React app designed as a birthday gift experience and a c
 
 ## 📁 Project Structure
 
-- src/components - Main app UI sections such as birthday mode, study mode, timer, and noise controls
+- src/components - Main app UI sections such as birthday mode, study mode, timer, noise controls, and new widgets
 - src/hooks - Custom hooks for interaction logic
 - src/assets/sounds - Ambient audio files
 

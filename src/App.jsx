@@ -74,10 +74,6 @@ export default function App() {
             </a>
           ))}
         </div>
-
-        <p className="footer-copyright">
-          © 2025 Nadia Hossny.
-        </p>
       </footer>
     </div>
   );

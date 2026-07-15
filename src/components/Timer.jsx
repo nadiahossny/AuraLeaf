@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-
-import beverageIcon from '../assets/beverage.svg';
-import brainIcon from '../assets/brain.svg';
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, Pause, RotateCcw, Minimize2 } from 'lucide-react';
+import Draggable from 'react-draggable';
 
 export default function Timer() {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('focus'); // 'focus' or 'rest'
+  const [isMinimized, setIsMinimized] = useState(false);
+  const nodeRef = useRef(null);
 
   useEffect(() => {
     let interval = null;
@@ -39,44 +40,64 @@ export default function Timer() {
     setSeconds(0);
   };
 
-  const switchMode = () => {
+  const handleTabClick = (newMode) => {
+    if (mode === newMode) return;
     setIsActive(false);
-    if(mode === 'focus') {
-      setMode('rest');
-      setMinutes(5);
-    } else {
-      setMode('focus');
-      setMinutes(25);
-    }
+    setMode(newMode);
+    setMinutes(newMode === 'focus' ? 25 : 5);
     setSeconds(0);
   };
 
   return (
-    <div className="focus-card">
-      <h2 style={{ opacity: 0.6, textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-        {mode === 'focus' ? 'Currently Focusing' : 'Resting Time'}
-      </h2>
-      
-      <div className="timer-display">
-        {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-      </div>
+    <Draggable nodeRef={nodeRef} cancel=".btn-minimize, .timer-tab, .btn-minimal-play, .btn-minimal-reset" bounds="body">
+      {isMinimized ? (
+        <div ref={nodeRef} className="focus-card-minimized" onClick={() => setIsMinimized(false)}>
+          <div className="timer-minimized-time">
+            {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+          </div>
+          <button 
+            className="btn-play-toggle" 
+            style={{ width: '30px', height: '30px' }}
+            onClick={(e) => { e.stopPropagation(); toggleTimer(); }}
+          >
+            {isActive ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: '2px' }} />}
+          </button>
+        </div>
+      ) : (
+        <div ref={nodeRef} className="focus-card">
+          <button className="btn-minimize" onClick={() => setIsMinimized(true)} title="Minimize Timer">
+            <Minimize2 size={20} />
+          </button>
 
-      <div className="timer-controls">
-        <button onClick={toggleTimer} className={isActive ? 'active' : ''}>
-          {isActive ? 'Pause' : 'Start Focus'}
-        </button>
-        <button className="btn-secondary" onClick={resetTimer}>
-          Reset
-        </button>
-      </div>
-      
-      {/* NEW: Enhanced Switch Button */}
-      <div className="mode-toggle-container">
-        <button className="btn-mode-switch" onClick={switchMode}>
-          <img src={mode === 'focus' ? beverageIcon : brainIcon} alt="Mode Icon" className="icon" style={{ width: '1.2em', height: '1.2em' }} />
-          <span>Switch to {mode === 'focus' ? 'Short Break' : 'Deep Focus'}</span>
-        </button>
-      </div>
-    </div>
+          <div className="timer-tabs">
+            <button 
+              className={`timer-tab ${mode === 'focus' ? 'active' : ''}`}
+              onClick={() => handleTabClick('focus')}
+            >
+              Focus
+            </button>
+            <button 
+              className={`timer-tab ${mode === 'rest' ? 'active' : ''}`}
+              onClick={() => handleTabClick('rest')}
+            >
+              Short Break
+            </button>
+          </div>
+          
+          <div className="timer-display">
+            {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+          </div>
+
+          <div className="timer-controls-minimal">
+            <button className="btn-minimal-play" onClick={toggleTimer} title={isActive ? 'Pause' : 'Start'}>
+              {isActive ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: '4px' }} />}
+            </button>
+            <button className="btn-minimal-reset" onClick={resetTimer} title="Reset">
+              <RotateCcw size={24} />
+            </button>
+          </div>
+        </div>
+      )}
+    </Draggable>
   );
 }
