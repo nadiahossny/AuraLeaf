@@ -5,8 +5,6 @@ AuraLeaf is a heartfelt React app designed as a birthday gift experience and a c
 
 ## ✨ Features
 
-- Interactive birthday celebration with a candle-blowing moment
-- Surprise birthday card experience
 - Relaxing ambient sound scenes such as mountain wind, ocean waves, forest birds, and rain
 - Study timer and focus-friendly controls
 - Clean, modern UI built with React
