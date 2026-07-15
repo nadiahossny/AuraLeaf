@@ -2,13 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Minimize2 } from 'lucide-react';
 import Draggable from 'react-draggable';
 
-export default function Timer() {
+export default function Timer({ resetKey }) {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('focus'); // 'focus' or 'rest'
   const [isMinimized, setIsMinimized] = useState(false);
   const nodeRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  
+  const lastPos = useRef({ x: 0, y: 0 });
+  const [snapKey, setSnapKey] = useState(0);
+
+  useEffect(() => {
+    lastPos.current = { x: 0, y: 0 };
+    setSnapKey(prev => prev + 1);
+  }, [resetKey]);
 
   useEffect(() => {
     let interval = null;
@@ -48,10 +57,51 @@ export default function Timer() {
     setSeconds(0);
   };
 
+  const handleToggleMinimize = (toMinimize) => {
+    if (!nodeRef.current) return;
+    const rect = nodeRef.current.getBoundingClientRect();
+    const originalLeft = rect.left - lastPos.current.x;
+    const originalTop = rect.top - lastPos.current.y;
+    
+    const isRight = lastPos.current.x > 0;
+    
+    let targetLeft, targetTop;
+    
+    if (toMinimize) {
+      targetLeft = isRight ? window.innerWidth - 120 : 20; 
+      targetTop = 20;
+    } else {
+      targetLeft = isRight ? window.innerWidth - 470 : 20;
+      targetTop = rect.top;
+      // Ensure it doesn't go off-screen vertically when expanding
+      if (targetTop + 380 > window.innerHeight) {
+        targetTop = window.innerHeight - 400;
+      }
+    }
+
+    lastPos.current = {
+      x: targetLeft - originalLeft,
+      y: targetTop - originalTop
+    };
+    setIsMinimized(toMinimize);
+    setSnapKey(prev => prev + 1);
+  };
+
   return (
-    <Draggable nodeRef={nodeRef} cancel=".btn-minimize, .timer-tab, .btn-minimal-play, .btn-minimal-reset" bounds="body">
+    <Draggable 
+      key={`${resetKey}-${snapKey}`}
+      defaultPosition={lastPos.current}
+      nodeRef={nodeRef} 
+      cancel=".btn-minimize, .timer-tab, .btn-minimal-play, .btn-minimal-reset" 
+      bounds="body"
+      onDrag={() => { isDraggingRef.current = true; }}
+      onStop={(e, data) => { 
+        lastPos.current = { x: data.x, y: data.y };
+        setTimeout(() => { isDraggingRef.current = false; }, 50); 
+      }}
+    >
       {isMinimized ? (
-        <div ref={nodeRef} className="focus-card-minimized" onClick={() => setIsMinimized(false)}>
+        <div ref={nodeRef} className="focus-card-minimized" onClick={() => { if (!isDraggingRef.current) handleToggleMinimize(false); }}>
           <div className="timer-minimized-time">
             {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
           </div>
@@ -65,7 +115,7 @@ export default function Timer() {
         </div>
       ) : (
         <div ref={nodeRef} className="focus-card">
-          <button className="btn-minimize" onClick={() => setIsMinimized(true)} title="Minimize Timer">
+          <button className="btn-minimize" onClick={() => handleToggleMinimize(true)} title="Minimize Timer">
             <Minimize2 size={20} />
           </button>
 

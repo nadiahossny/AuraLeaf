@@ -3,7 +3,7 @@ import Draggable from 'react-draggable';
 import ReactPlayer from 'react-player';
 import { X, GripHorizontal, Loader2 } from 'lucide-react';
 
-export default function YoutubeWidget({ onClose }) {
+export default function YoutubeWidget({ onClose, resetKey }) {
   const [url, setUrl] = useState('');
   const [inputUrl, setInputUrl] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,7 +21,7 @@ export default function YoutubeWidget({ onClose }) {
   };
 
   return (
-    <Draggable nodeRef={nodeRef} handle=".yt-header" bounds="body">
+    <Draggable key={resetKey} nodeRef={nodeRef} handle=".yt-header" bounds="body">
       <div ref={nodeRef} className="youtube-widget">
         <div className="yt-header">
           <GripHorizontal size={18} className="drag-handle" />

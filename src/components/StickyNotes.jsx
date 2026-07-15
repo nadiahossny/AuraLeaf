@@ -58,7 +58,7 @@ function DraggableNote({ note, updateNote, deleteNote, changeColor, handleDrag }
   );
 }
 
-export default function StickyNotes({ onClose }) {
+export default function StickyNotes({ onClose, resetKey }) {
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem('auraleaf-notes');
     if (saved) {
@@ -74,6 +74,16 @@ export default function StickyNotes({ onClose }) {
   useEffect(() => {
     localStorage.setItem('auraleaf-notes', JSON.stringify(notes));
   }, [notes]);
+
+  useEffect(() => {
+    if (resetKey > 0) {
+      setNotes(prevNotes => prevNotes.map(n => ({ 
+        ...n, 
+        position: { x: window.innerWidth / 2 - 125, y: window.innerHeight / 2 - 125 } 
+      })));
+    }
+  }, [resetKey]);
+
 
   const addNote = () => {
     setNotes([...notes, { id: Date.now(), text: '', color: '#bbf7d0', position: { x: window.innerWidth / 2 - 125, y: window.innerHeight / 2 - 125 } }]);
@@ -103,7 +113,7 @@ export default function StickyNotes({ onClose }) {
       </div>
       {notes.map(note => (
         <DraggableNote 
-          key={note.id} 
+          key={`${note.id}-${resetKey}`} 
           note={note} 
           updateNote={updateNote} 
           deleteNote={deleteNote} 
