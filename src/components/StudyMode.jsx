@@ -129,42 +129,6 @@ export default function StudyMode({ name }) {
   const dockRef = useRef(null);
   const audioRefs = useRef(null);
   const isDraggingRef = useRef(false);
-  
-  const lastDockPos = useRef({ x: 0, y: 0 });
-  const [dockSnapKey, setDockSnapKey] = useState(0);
-
-  useEffect(() => {
-    lastDockPos.current = { x: 0, y: 0 };
-    setDockSnapKey(prev => prev + 1);
-  }, [resetKey]);
-
-  const handleToggleDockMinimize = (toMinimize) => {
-    if (!dockRef.current) return;
-    const rect = dockRef.current.getBoundingClientRect();
-    const originalLeft = rect.left - lastDockPos.current.x;
-    const originalTop = rect.top - lastDockPos.current.y;
-    
-    const isRight = lastDockPos.current.x > 0;
-    
-    let targetLeft, targetTop;
-    
-    if (toMinimize) {
-      targetLeft = isRight ? window.innerWidth - 130 : 20;
-      targetTop = 20;
-    } else {
-      targetLeft = isRight ? window.innerWidth - 750 : 20; 
-      targetTop = rect.top;
-      // Prevent offscreen when expanding
-      if (targetLeft < 10) targetLeft = 10;
-    }
-
-    lastDockPos.current = {
-      x: targetLeft - originalLeft,
-      y: targetTop - originalTop
-    };
-    setIsDockMinimized(toMinimize);
-    setDockSnapKey(prev => prev + 1);
-  };
 
   // Initialize audio objects once lazily
   if (!audioRefs.current) {
@@ -247,20 +211,16 @@ export default function StudyMode({ name }) {
         {showNotes && <StickyNotes onClose={() => setShowNotes(false)} resetKey={resetKey} />}
 
         <Draggable 
-          key={`${resetKey}-${dockSnapKey}`}
-          defaultPosition={lastDockPos.current}
+          key={resetKey}
           nodeRef={dockRef} 
           handle={isDockMinimized ? null : ".control-dock"} 
           bounds="body" 
           cancel=".no-drag"
           onDrag={() => { isDraggingRef.current = true; }}
-          onStop={(e, data) => { 
-            lastDockPos.current = { x: data.x, y: data.y };
-            setTimeout(() => { isDraggingRef.current = false; }, 50); 
-          }}
+          onStop={() => { setTimeout(() => { isDraggingRef.current = false; }, 50); }}
         >
           {isDockMinimized ? (
-            <div ref={dockRef} className="dock-minimized" onClick={() => { if (!isDraggingRef.current) handleToggleDockMinimize(false); }}>
+            <div ref={dockRef} className="dock-minimized" onClick={() => { if (!isDraggingRef.current) setIsDockMinimized(false); }}>
                <Maximize2 size={20} />
                <span>Dock</span>
             </div>
@@ -309,7 +269,7 @@ export default function StudyMode({ name }) {
                   <RotateCcw size={22} className="dock-icon-lucide" />
                   <span>Reset Layout</span>
                 </button>
-                <button className="dock-btn" onClick={() => handleToggleDockMinimize(true)}>
+                <button className="dock-btn" onClick={() => setIsDockMinimized(true)}>
                   <Minimize2 size={22} className="dock-icon-lucide" />
                   <span>Minimize</span>
                 </button>
