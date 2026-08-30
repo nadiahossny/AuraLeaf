@@ -48,7 +48,7 @@ export default function YoutubeWidget({ onClose, resetKey }) {
                 </div>
               )}
               <ReactPlayer 
-                src={url} 
+                url={url} 
                 className="react-player"
                 width="100%" 
                 height="100%" 

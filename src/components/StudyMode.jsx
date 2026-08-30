@@ -4,7 +4,8 @@ import NoiseMenu from "./NoiseMenu";
 import Timer from "./Timer";
 import YoutubeWidget from "./YoutubeWidget";
 import StickyNotes from "./StickyNotes";
-import { MonitorPlay, StickyNote, Minimize2, Maximize2, Droplets, RotateCcw } from 'lucide-react';
+import TodoList from "./TodoList";
+import { MonitorPlay, StickyNote, Minimize2, Maximize2, Droplets, RotateCcw, ListTodo } from 'lucide-react';
 
 // Import audio files
 import mountainS from '../assets/sounds/mountain.mp3';
@@ -99,7 +100,7 @@ const WaterRippleBackground = ({ imageUrl, overlay, isRippleEnabled }) => {
 
   return (
     <div ref={containerRef} className="water-ripple-bg" style={{ 
-      width: '100vw', 
+      width: '100%', 
       height: '100vh', 
       position: 'fixed', 
       top: 0, 
@@ -123,6 +124,7 @@ export default function StudyMode({ name }) {
   const [isDockMinimized, setIsDockMinimized] = useState(false);
   const [showYoutube, setShowYoutube] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [showTodo, setShowTodo] = useState(false);
   const [isRippleEnabled, setIsRippleEnabled] = useState(true);
   const [resetKey, setResetKey] = useState(0);
 
@@ -209,6 +211,7 @@ export default function StudyMode({ name }) {
         
         {showYoutube && <YoutubeWidget onClose={() => setShowYoutube(false)} resetKey={resetKey} />}
         {showNotes && <StickyNotes onClose={() => setShowNotes(false)} resetKey={resetKey} />}
+        {showTodo && <TodoList onClose={() => setShowTodo(false)} resetKey={resetKey} />}
 
         <Draggable 
           key={resetKey}
@@ -264,6 +267,10 @@ export default function StudyMode({ name }) {
                 <button className={`dock-btn ${showNotes ? 'active' : ''}`} onClick={() => setShowNotes(!showNotes)}>
                   <StickyNote size={22} className="dock-icon-lucide" />
                   <span>Notes</span>
+                </button>
+                <button className={`dock-btn ${showTodo ? 'active' : ''}`} onClick={() => setShowTodo(!showTodo)}>
+                  <ListTodo size={22} className="dock-icon-lucide" />
+                  <span>To Do</span>
                 </button>
                 <button className="dock-btn" onClick={() => setResetKey(prev => prev + 1)}>
                   <RotateCcw size={22} className="dock-icon-lucide" />
