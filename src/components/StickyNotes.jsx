@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import { X, Plus, GripHorizontal, Palette } from 'lucide-react';
 
-const COLORS = ['#fef08a', '#fbcfe8', '#bfdbfe', '#bbf7d0', '#e9d5ff'];
+const COLORS = ['#e2e8f0', '#bae6fd', '#bbf7d0', '#c7d2fe'];
 
 function DraggableNote({ note, updateNote, deleteNote, changeColor, handleDrag }) {
   const nodeRef = useRef(null);
@@ -68,7 +68,7 @@ export default function StickyNotes({ onClose, resetKey }) {
         return [];
       }
     }
-    return [{ id: 1, text: '', color: '#bbf7d0', position: { x: 50, y: 50 } }];
+    return [{ id: 1, text: '', color: COLORS[0], position: { x: 50, y: 50 } }];
   });
 
   useEffect(() => {
@@ -86,7 +86,19 @@ export default function StickyNotes({ onClose, resetKey }) {
 
 
   const addNote = () => {
-    setNotes([...notes, { id: Date.now(), text: '', color: '#bbf7d0', position: { x: window.innerWidth / 2 - 125, y: window.innerHeight / 2 - 125 } }]);
+    let newX = window.innerWidth / 2 - 125;
+    let newY = window.innerHeight / 2 - 125;
+    
+    if (notes.length > 0) {
+      const lastNote = notes[notes.length - 1];
+      newX = lastNote.position.x + 20;
+      newY = lastNote.position.y + 20;
+      
+      if (newX > window.innerWidth - 250) newX = window.innerWidth / 2 - 125;
+      if (newY > window.innerHeight - 250) newY = window.innerHeight / 2 - 125;
+    }
+
+    setNotes([...notes, { id: Date.now(), text: '', color: COLORS[0], position: { x: newX, y: newY } }]);
   };
 
   const updateNote = (id, text) => {
