@@ -17,7 +17,7 @@ export default function TodoList({ onClose, resetKey }) {
   });
   
   const [inputValue, setInputValue] = useState('');
-  const [position, setPosition] = useState({ x: window.innerWidth / 2 + 150, y: window.innerHeight / 2 - 125 });
+  const [position, setPosition] = useState({ x: window.innerWidth / 2 + 250, y: window.innerHeight / 2 - 125 });
 
   useEffect(() => {
     localStorage.setItem('auraleaf-todos', JSON.stringify(tasks));
@@ -25,7 +25,7 @@ export default function TodoList({ onClose, resetKey }) {
 
   useEffect(() => {
     if (resetKey > 0) {
-      setPosition({ x: window.innerWidth / 2 + 150, y: window.innerHeight / 2 - 125 });
+      setPosition({ x: window.innerWidth / 2 + 250, y: window.innerHeight / 2 - 125 });
     }
   }, [resetKey]);
 
