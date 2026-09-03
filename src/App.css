@@ -25,14 +25,66 @@ body {
   background: #0f172a;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent; 
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4); 
+}
+
+/* Firefox scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* --- ACCESSIBILITY / UX LAWS --- */
+/* Focus states (Jakob's Law/Accessibility): Ensure keyboard navigators know where they are */
+button:focus-visible, 
+input:focus-visible, 
+textarea:focus-visible, 
+a:focus-visible {
+  outline: 2px solid #4ade80;
+  outline-offset: 2px;
+}
+
+/* Fitts's Law: Invisible extended touch targets for visually small elements */
+.btn-icon, .btn-close, .sidebar-close, .btn-minimize, .todo-delete,
+.todo-check, .color-swatch, .timer-tab, .volume-slider::-webkit-slider-thumb {
+  position: relative;
+}
+.btn-icon::after, .btn-close::after, .sidebar-close::after, .btn-minimize::after, .todo-delete::after,
+.todo-check::after, .color-swatch::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  z-index: 1; /* Ensure it stays clickable over small elements */
+}
+
 /* --- LAYOUT ARCHITECTURE (The Fix) --- */
 .app {
   min-height: 100vh;
   width: 100%;
+  max-width: 100vw;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1; /* Content sits on top of background */
+  overflow-x: hidden;
 }
 
 @media (max-width: 768px) {
@@ -106,13 +158,12 @@ body {
 
 /* --- TIMER CARD --- */
 .focus-card {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
+  background: #0f172a; /* Solid dark background */
   border: 1px solid var(--glass-border);
   padding: 2.5rem 3rem;
   border-radius: 2rem;
   text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   max-width: 90%;
   position: relative;
   transition: box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
@@ -120,15 +171,42 @@ body {
 
 .timer-display {
   font-size: 5rem;
-  font-weight: 300;
-  margin: 1rem 0;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0.5rem 0;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
   font-variant-numeric: tabular-nums;
 }
 
+.timer-edit-input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: inherit;
+  font-family: inherit;
+  width: 150px;
+  text-align: center;
+  outline: none;
+  border-bottom: 2px solid rgba(255,255,255,0.5);
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+
+.timer-edit-input::-webkit-outer-spin-button,
+.timer-edit-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* --- TIMER BUTTONS (Missing Styles Fix) --- */
 /* --- CONTROL DOCK (The Bottom Bar) --- */
 .dock-wrapper {
-  /* This wrapper ensures the dock stays nicely positioned */
-  margin-bottom: 1rem;
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .control-dock {
@@ -207,6 +285,10 @@ body {
     left: 50%;
     transform: translateX(-50%);
     width: max-content;
+  }
+
+  .tools-sidebar {
+    width: 100%;
   }
 }
 /* --- AMBIENCE MENU (The Modal) --- */
@@ -370,15 +452,17 @@ body {
 }
 /* --- TIMER CARD (Fixed Size) --- */
 .focus-card {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
   padding: 3rem;
   border-radius: 2rem;
   text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   position: relative;
-  transition: box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+  transition: box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease, padding 0.3s ease;
   
   /* FIX: Prevent resizing when text changes */
   width: 100%;
@@ -392,9 +476,11 @@ body {
 
 /* --- MINIMIZED TIMER PILL --- */
 .focus-card-minimized {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: white;
   padding: 0.5rem 1rem;
   border-radius: 50px;
   display: flex;
@@ -720,7 +806,7 @@ body {
 .sticky-note {
   width: 250px;
   min-height: 250px;
-  border-radius: 4px;
+  border-radius: 16px;
   padding: 1.2rem;
   box-shadow: 2px 4px 12px rgba(0,0,0,0.15), inset 0 0 40px rgba(0,0,0,0.05);
   position: absolute;
@@ -743,7 +829,7 @@ body {
   align-items: center;
   margin-bottom: 0.8rem;
   cursor: grab;
-  color: rgba(0,0,0,0.6);
+  color: rgba(255,255,255,0.7);
 }
 .note-header:active { cursor: grabbing; }
 
@@ -757,17 +843,18 @@ body {
   background: transparent;
   border: none;
   cursor: pointer;
-  color: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  border-radius: 4px;
+  border-radius: 50%;
   transition: 0.2s;
+  aspect-ratio: 1 / 1;
 }
 .btn-icon:hover {
-  color: rgba(0,0,0,0.8);
-  background: rgba(255,255,255,0.4);
+  color: white;
+  background: rgba(255,255,255,0.2);
 }
 
 .color-picker-container {
@@ -776,15 +863,27 @@ body {
 
 .color-palette {
   position: absolute;
-  top: 100%;
-  right: 0;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: 8px;
   display: flex;
   gap: 6px;
-  background: white;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
   padding: 8px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  z-index: 50;
+  border-radius: 50px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 100;
+}
+/* Invisible bridge so mouse doesn't leave when moving from button to palette */
+.color-palette::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -8px;
+  width: 8px;
 }
 
 .color-swatch {
@@ -796,7 +895,7 @@ body {
   transition: transform 0.2s;
 }
 .color-swatch:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 .note-textarea {
@@ -807,17 +906,23 @@ body {
   outline: none;
   font-family: inherit;
   font-size: 1.05rem;
-  color: rgba(0,0,0,0.8);
+  color: white;
   line-height: 1.5;
+  width: 100%;
 }
-.note-textarea::placeholder { color: rgba(0,0,0,0.3); }
+.note-textarea::placeholder { color: rgba(255,255,255,0.6); }
 
 /* Update drag handle for contrast */
 .drag-handle { transition: color 0.2s; }
-.note-header:hover .drag-handle { color: rgba(0,0,0,0.8); }
+.note-header:hover .drag-handle { color: white; }
+
 
 /* --- DOCK MINIMIZED --- */
 .dock-minimized {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(15px);
   border: 1px solid var(--glass-border);
@@ -829,16 +934,15 @@ body {
   color: white;
   cursor: pointer;
   box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  transition: box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition: box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s ease;
   z-index: 60;
   width: fit-content;
-  margin-bottom: 1rem;
   touch-action: none;
 }
 
 .dock-minimized:hover {
   background: rgba(0,0,0,0.8);
-  transform: translateY(-2px);
+  transform: translate(-50%, -2px);
 }
 
 .btn-close-sm {
@@ -861,17 +965,12 @@ body {
   backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
-  width: 320px;
+  width: 100%;
   min-height: 300px;
   max-height: 500px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 48;
   display: flex;
   flex-direction: column;
-  touch-action: none;
 }
 .todo-header {
   background: rgba(0,0,0,0.5);
@@ -886,7 +985,7 @@ body {
 .todo-header:active { cursor: grabbing; }
 .todo-title { flex: 1; font-weight: 600; text-align: center; }
 .todo-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.todo-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.todo-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-shrink: 0; }
 .todo-form input {
   flex: 1; padding: 0.6rem; border-radius: 8px; border: none; outline: none;
   background: rgba(255,255,255,0.2); color: white;
@@ -895,9 +994,7 @@ body {
 .todo-form button {
   padding: 0 0.8rem; border-radius: 8px; border: none; background: #4ade80; color: #0f172a; cursor: pointer; display: flex; align-items: center;
 }
-.todo-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
-.todo-list::-webkit-scrollbar { width: 6px; }
-.todo-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+.todo-list { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 0.5rem; }
 .todo-empty { text-align: center; color: rgba(255,255,255,0.5); margin-top: 2rem; }
 .todo-item {
   display: flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.1); padding: 0.6rem; border-radius: 8px; transition: 0.2s;
@@ -913,3 +1010,376 @@ body {
   background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
 }
 .todo-delete:hover { color: #ef4444; }
+/* --- LANDING PAGE --- */
+.landing-page {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  z-index: 9999;
+}
+.landing-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(10px) brightness(0.7);
+  transform: scale(1.05); /* prevent blur edges */
+  z-index: -2;
+}
+.landing-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+.landing-content {
+  text-align: center;
+  background: var(--glass);
+  padding: 4rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  animation: fadeIn 1s ease-out;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  color: var(--accent);
+}
+.logo-container h1 {
+  font-size: 3rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+.landing-content h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+.landing-content p {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 3rem;
+}
+.start-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 0 auto;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.start-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(74, 222, 128, 0.4);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* --- ZEN MODE (FOCUS MODE) FIXES --- */
+
+
+.zen-mode .tools-sidebar, .zen-mode-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* --- ZEN MODE EXIT BUTTON --- */
+.btn-exit-zen {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 2000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-exit-zen:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+
+/* --- FLOATING TOOLS --- */
+.floating-tools-container {
+  transition: opacity 0.5s ease;
+}
+
+
+
+
+
+/* --- SIDEBAR NOTES --- */
+.notes-sidebar-container {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  width: 100%;
+  max-height: 500px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notes-sidebar-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.sidebar-widget {
+  margin: 1rem;
+  width: auto !important; /* Override inline styles if any */
+  min-height: 150px !important;
+}
+
+/* Ensure sticky notes stack properly inside the sidebar */
+.notes-sidebar-container .sticky-note {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* --- UX TEARDOWN STYLES --- */
+
+/* Dim Overlay for Active Session */
+.dim-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 0; /* Just above the background, below content */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-in-out;
+}
+.dim-overlay.active {
+  opacity: 1;
+}
+
+/* Top Left Branding Badge */
+.header-brand-badge {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  transition: background 0.2s, transform 0.2s, opacity 0.5s ease;
+  z-index: 1000;
+}
+.header-brand-badge:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
+
+/* Overflow Menu */
+.overflow-menu-container {
+  position: relative;
+}
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.overflow-menu-popup {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: popupFadeIn 0.2s ease;
+  z-index: 1001;
+}
+
+.overflow-menu-popup .dock-btn {
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.5rem;
+}
+.overflow-menu-popup .dock-btn span {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Extreme Minimalism (Do Not Disturb) */
+.dnd-active.focus-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.dnd-active .timer-tabs,
+.dnd-active .timer-controls-minimal,
+.dnd-active .btn-minimize,
+.dnd-active .current-focus-task,
+.dnd-active .sessions-counter {
+  display: none !important;
+}
+
+/* --- SIDEBAR COMPONENTS --- */
+.tools-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100vh;
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.sidebar-tabs {
+  display: flex;
+  padding: 1rem 1rem 0;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-tab {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.sidebar-tab:hover {
+  color: white;
+}
+
+.sidebar-tab.active {
+  color: #4ade80;
+  border-bottom-color: #4ade80;
+}
+
+.sidebar-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.sidebar-close:hover {
+  color: white;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make inner components take full width instead of fixed floating width */
+.sidebar-content-inner {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  position: static !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .youtube-widget {
+    left: 5% !important;
+    top: 15% !important;
+    width: 90% !important;
+    min-width: unset;
+    transform: none !important;
+  }
+  .tools-sidebar {
+    width: 100%;
+  }
+}

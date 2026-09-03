@@ -1,64 +1,54 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Draggable from 'react-draggable';
-import { X, Plus, GripHorizontal, Palette } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Plus, Palette } from 'lucide-react';
 
-const COLORS = ['#e2e8f0', '#bae6fd', '#bbf7d0', '#c7d2fe'];
+// Tinted dark glass to ensure white text is always readable against any background
+const COLORS = ['rgba(15, 23, 42, 0.85)', 'rgba(12, 74, 110, 0.85)', 'rgba(20, 83, 45, 0.85)', 'rgba(88, 28, 135, 0.85)'];
 
-function DraggableNote({ note, updateNote, deleteNote, changeColor, handleDrag }) {
-  const nodeRef = useRef(null);
+function SidebarNote({ note, updateNote, deleteNote, changeColor }) {
   const [showColors, setShowColors] = useState(false);
   
   return (
-    <Draggable 
-      nodeRef={nodeRef}
-      handle=".note-header"
-      defaultPosition={note.position}
-      onStop={(e, data) => handleDrag(note.id, e, data)}
-      bounds="body"
-    >
-      <div ref={nodeRef} className="sticky-note" style={{ backgroundColor: note.color }}>
-        <div className="note-header">
-          <GripHorizontal size={16} className="drag-handle" />
-          <div className="note-actions">
-            <div className="color-picker-container" onMouseLeave={() => setShowColors(false)}>
-              <button 
-                className="btn-icon" 
-                onClick={() => setShowColors(!showColors)}
-                title="Change Color"
-              >
-                <Palette size={14} />
-              </button>
-              {showColors && (
-                <div className="color-palette">
-                  {COLORS.map(c => (
-                    <div 
-                      key={c} 
-                      className="color-swatch" 
-                      style={{ backgroundColor: c }}
-                      onClick={() => { changeColor(note.id, c); setShowColors(false); }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-            <button className="btn-icon btn-delete-note" onClick={() => deleteNote(note.id)} title="Delete Note">
-              <X size={16}/>
+    <div className="sticky-note sidebar-widget" style={{ backgroundColor: note.color, position: 'relative' }}>
+      <div className="note-header" style={{ cursor: 'default' }}>
+        <div className="note-actions" style={{ marginLeft: 'auto' }}>
+          <div className="color-picker-container" onMouseLeave={() => setShowColors(false)}>
+            <button 
+              className="btn-icon" 
+              onClick={() => setShowColors(!showColors)}
+              title="Change Color"
+            >
+              <Palette size={14} />
             </button>
+            {showColors && (
+              <div className="color-palette">
+                {COLORS.map(c => (
+                  <div 
+                    key={c} 
+                    className="color-swatch" 
+                    style={{ backgroundColor: c }}
+                    onClick={() => { changeColor(note.id, c); setShowColors(false); }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
+          <button className="btn-icon btn-delete-note" onClick={() => deleteNote(note.id)} title="Delete Note">
+            <X size={16}/>
+          </button>
         </div>
-        <textarea 
-          value={note.text}
-          onChange={(e) => updateNote(note.id, e.target.value)}
-          placeholder="Type your note here..."
-          className="note-textarea"
-          spellCheck="false"
-        />
       </div>
-    </Draggable>
+      <textarea 
+        value={note.text}
+        onChange={(e) => updateNote(note.id, e.target.value)}
+        placeholder="Type your note here..."
+        className="note-textarea"
+        spellCheck="false"
+      />
+    </div>
   );
 }
 
-export default function StickyNotes({ onClose, resetKey }) {
+export default function StickyNotes({ onClose }) {
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem('auraleaf-notes');
     if (saved) {
@@ -68,37 +58,17 @@ export default function StickyNotes({ onClose, resetKey }) {
         return [];
       }
     }
-    return [{ id: 1, text: '', color: COLORS[0], position: { x: 50, y: 50 } }];
+    return [{ id: 1, text: '', color: COLORS[0] }];
   });
+  
 
   useEffect(() => {
     localStorage.setItem('auraleaf-notes', JSON.stringify(notes));
   }, [notes]);
 
-  useEffect(() => {
-    if (resetKey > 0) {
-      setNotes(prevNotes => prevNotes.map(n => ({ 
-        ...n, 
-        position: { x: window.innerWidth / 2 - 125, y: window.innerHeight / 2 - 125 } 
-      })));
-    }
-  }, [resetKey]);
-
 
   const addNote = () => {
-    let newX = window.innerWidth / 2 - 125;
-    let newY = window.innerHeight / 2 - 125;
-    
-    if (notes.length > 0) {
-      const lastNote = notes[notes.length - 1];
-      newX = lastNote.position.x + 20;
-      newY = lastNote.position.y + 20;
-      
-      if (newX > window.innerWidth - 250) newX = window.innerWidth / 2 - 125;
-      if (newY > window.innerHeight - 250) newY = window.innerHeight / 2 - 125;
-    }
-
-    setNotes([...notes, { id: Date.now(), text: '', color: COLORS[0], position: { x: newX, y: newY } }]);
+    setNotes([...notes, { id: Date.now(), text: '', color: COLORS[0] }]);
   };
 
   const updateNote = (id, text) => {
@@ -113,26 +83,36 @@ export default function StickyNotes({ onClose, resetKey }) {
     setNotes(notes.map(n => n.id === id ? { ...n, color } : n));
   };
 
-  const handleDrag = (id, e, data) => {
-    setNotes(notes.map(n => n.id === id ? { ...n, position: { x: data.x, y: data.y } } : n));
-  };
-
   return (
-    <>
-      <div className="notes-controls">
-        <button onClick={addNote} className="btn-add-note"><Plus size={16}/> New Note</button>
-        <button onClick={onClose} className="btn-close-notes"><X size={16}/> Close Notes</button>
+    <div className="notes-sidebar-container sidebar-content-inner">
+      <div className="notes-sidebar-header" style={{ display: 'none' }}>
+        <span className="todo-title">Notes</span>
+        <div style={{display: 'flex', gap: '0.5rem'}}>
+          <button onClick={addNote} className="btn-icon" title="New Note"><Plus size={16}/></button>
+        </div>
       </div>
-      {notes.map(note => (
-        <DraggableNote 
-          key={`${note.id}-${resetKey}`} 
-          note={note} 
-          updateNote={updateNote} 
-          deleteNote={deleteNote} 
-          changeColor={changeColor}
-          handleDrag={handleDrag} 
-        />
-      ))}
-    </>
+      
+      {/* Moved the add note button outside for sidebar */}
+      <div style={{ padding: '0 1rem 1rem 1rem', display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+        <button 
+          onClick={addNote} 
+          style={{ width: '100%', padding: '0.5rem', borderRadius: '8px', border: '1px dashed rgba(255,255,255,0.4)', background: 'transparent', color: 'white', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+        >
+          <Plus size={16} /> Add Note
+        </button>
+      </div>
+
+      <div className="notes-list">
+        {notes.map(note => (
+          <SidebarNote 
+            key={note.id} 
+            note={note} 
+            updateNote={updateNote} 
+            deleteNote={deleteNote} 
+            changeColor={changeColor}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
