@@ -1,0 +1,267 @@
+sform: translateY(0); }
+}
+
+
+/* --- ZEN MODE (FOCUS MODE) FIXES --- */
+
+
+.zen-mode .tools-sidebar, .zen-mode-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* --- ZEN MODE EXIT BUTTON --- */
+.btn-exit-zen {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 2000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-exit-zen:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+
+/* --- FLOATING TOOLS --- */
+.floating-tools-container {
+  transition: opacity 0.5s ease;
+}
+
+
+
+
+
+/* --- SIDEBAR NOTES --- */
+.notes-sidebar-container {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  width: 100%;
+  max-height: 500px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.notes-sidebar-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.sidebar-widget {
+  margin: 1rem;
+  width: auto !important; /* Override inline styles if any */
+  min-height: 150px !important;
+}
+
+/* Ensure sticky notes stack properly inside the sidebar */
+.notes-sidebar-container .sticky-note {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* --- UX TEARDOWN STYLES --- */
+
+/* Dim Overlay for Active Session */
+.dim-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 0; /* Just above the background, below content */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-in-out;
+}
+.dim-overlay.active {
+  opacity: 1;
+}
+
+/* Top Left Branding Badge */
+.header-brand-badge {
+  position: fixed;
+  top: 2rem;
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: popupFadeIn 0.2s ease;
+  z-index: 1001;
+}
+
+.overflow-menu-popup .dock-btn {
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.5rem;
+}
+.overflow-menu-popup .dock-btn span {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Extreme Minimalism (Do Not Disturb) */
+.dnd-active.focus-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.dnd-active .timer-tabs,
+.dnd-active .timer-controls-minimal,
+.dnd-active .btn-minimize,
+.dnd-active .current-focus-task,
+.dnd-active .sessions-counter {
+  display: none !important;
+}
+
+/* --- SIDEBAR COMPONENTS --- */
+.tools-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 350px;
+  height: 100vh;
+  background: transparent;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.sidebar-tabs {
+  display: flex;
+  padding: 1rem 1rem 0;
+  gap: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-tab {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.sidebar-tab:hover {
+  color: white;
+}
+
+.sidebar-tab.active {
+  color: #4ade80;
+  border-bottom-color: #4ade80;
+}
+
+.sidebar-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.sidebar-close:hover {
+  color: white;
+}
+
+.sidebar-content {
+  flex: 1 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make inner components take full width instead of fixed floating width */
+.sidebar-content-inner {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  position: static !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .main-content.sidebar-open {
+    padding-right: 0;
+  }
+  .youtube-widget {
+    left: 5% !important;
+    top: 15% !important;
+    width: 90% !important;
+    min-width: unset;
+    transform: none !important;
+  }
+  .tools-sidebar {
+    width: 100%;
+  }
+}
+`, "",{"version":3,"sources":["webpack://./src/App.css"],"names":[],"mappings":"AAAA,YAAY;;AAGZ;EACE,kBAAkB;EAClB,iCAAiC;EACjC,sCAAsC;EACtC,yCAAyC;EACzC,iBAAiB;AACnB;;AAEA;EACE,sBAAsB;EACtB,SAAS;EACT,UAAU;AACZ;;AAEA;EACE,kBAAkB;AACpB;;AAEA;EACE,iCAAiC;EACjC,YAAY;EACZ,mBAAmB;AACrB;;AAEA,qBAAqB;AACrB;EACE,UAAU;EACV,WAAW;AACb;AACA;EACE,uBAAuB;EACvB,kBAAkB;AACpB;AACA;EACE,oCAAoC;EACpC,kBAAkB;AACpB;AACA;EACE,oCAAoC;AACtC;;AAEA,uBAAuB;AACvB;EACE,qBAAqB;EACrB,qDAAqD;AACvD;;AAEA,oCAAoC;AACpC,6FAA6F;AAC7F;;;;EAIE,0BAA0B;EAC1B,mBAAmB;AACrB;;AAEA,8EAA8E;AAC9E;;EAEE,kBAAkB;AACpB;AACA;;EAEE,WAAW;EACX,kBAAkB;EAClB,QAAQ;EACR,SAAS;EACT,WAAW;EACX,YAAY;EACZ,gCAAgC;EAChC,UAAU,EAAE,kDAAkD;AAChE;;AAEA,0CAA0C;AAC1C;EACE,iBAAiB;EACjB,WAAW;EACX,gBAAgB;EAChB,aAAa;EACb,sBAAsB;EACtB,kBAAkB;EAClB,UAAU,EAAE,sCAAsC;EAClD,kBAAkB;AACpB;;AAEA;EACE;IACE,kBAAkB;EACpB;EACA;IACE,gBAAgB;IAChB,kBAAkB;IAClB,YAAY;IACZ,iBAAiB;EACnB;AACF;;AAEA,qBAAqB;AACrB;EACE,eAAe;EACf,MAAM,EAAE,OAAO,EAAE,WAAW,EAAE,YAAY;EAC1C,WAAW;EACX,sBAAsB;EACtB,2BAA2B;EAC3B,6CAA6C;AAC/C;AACA,iBAAiB;AACjB,eAAe,4GAAiG,EAAE;AAClH,YAAY,4GAA8F,EAAE;AAC5G,aAAa,4GAA+F,EAAE;AAC9G,WAAW,4GAA6F,EAAE;;AAE1G,yCAAyC;AACzC;EACE,cAAc,EAAE,yBAAyB;EACzC,oBAAoB;EACpB,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;AACrB;;AAEA;EACE,cAAc,EAAE,yBAAyB;AAC3C;;AAEA,4CAA4C;AAC5C;EACE,SAAO,EAAE,8BAA8B;EACvC,aAAa;EACb,sBAAsB;EACtB,uBAAuB;EACvB,mBAAmB;EACnB,SAAS,EAAE,wCAAwC;EACnD,kBAAkB;EAClB,WAAW;EACX,eAAe,EAAE,uCAAuC;EACxD,4DAA4D;AAC9D;;AAEA;EACE,oBAAoB;AACtB;;AAEA,uBAAuB;AACvB;EACE,aAAa;EACb,mBAAmB;EACnB,WAAW;EACX,iBAAiB;EACjB,gBAAgB;EAChB,wBAAwB;EACxB,oBAAoB;EACpB,mBAAmB;EACnB,2BAA2B;EAC3B,qCAAqC;AACvC;;;;AAIA,uBAAuB;AACvB;EACE,mBAAmB,EAAE,0BAA0B;EAC/C,qCAAqC;EACrC,oBAAoB;EACpB,mBAAmB;EACnB,kBAAkB;EAClB,2CAA2C;EAC3C,cAAc;EACd,kBAAkB;EAClB,8EAA8E;AAChF;;AAEA;EACE,eAAe;EACf,gBAAgB;EAChB,mBAAmB;EACnB,gBAAgB;EAChB,uCAAuC;EACvC,kCAAkC;AACpC;;AAEA;EACE,uBAAuB;EACvB,YAAY;EACZ,YAAY;EACZ,kBAAkB;EAClB,oBAAoB;EACpB,YAAY;EACZ,kBAAkB;EAClB,aAAa;EACb,8CAA8C;EAC9C,kCAAkC;EAClC,0BAA0B;AAC5B;;AAEA;;EAEE,wBAAwB;EACxB,SAAS;AACX;;AAEA,+CAA+C;AAC/C,0CAA0C;AAC1C;EACE,eAAe;EACf,YAAY;EACZ,SAAS;EACT,2BAA2B;EAC3B,aAAa;EACb,kDAAkD;AACpD;;AAEA;EACE,8BAA8B;EAC9B,2BAA2B;EAC3B,mBAAmB;EACnB,sBAAsB;EACtB,aAAa;EACb,WAAW;EACX,mBAAmB;EACnB,qCAAqC;EACrC,uCAAuC;AACzC;;AAEA;EACE,uBAAuB;EACvB,YAAY;EACZ,4BAA4B;EAC5B,iBAAiB;EACjB,aAAa;EACb,sBAAsB;EACtB,mBAAmB;EACnB,QAAQ;EACR,eAAe;EACf,gBAAgB;EAChB,eAAe;AACjB;AACA,oCAAoC,YAAY,EAAE,qBAAqB,EAAE;AACzE,8BAA8B,2CAA2C,EAAE;AAC3E,aAAa,iBAAiB,EAAE;;AAEhC;EACE,UAAU;EACV,YAAY;EACZ,kCAAkC;AACpC;;AAEA,kCAAkC;AAClC;EACE;IACE,WAAW;IACX,eAAe;EACjB;;EAEA,iBAAiB,eAAe,EAAE,gBAAgB,EAAE;EACpD,cAAc,eAAe,EAAE,UAAU,EAAE,gBAAgB,EAAE,gBAAgB,EAAE;EAC/E,cAAc,WAAW,EAAE,gBAAgB,EAAE,mBAAmB,EAAE;EAClE,wCAAwC,WAAW,EAAE,YAAY,EAAE;;EAEnE;IACE,eAAe;IACf,WAAW;IACX,cAAc;IACd,eAAe;IACf,uBAAuB;IACvB,mBAAmB;EACrB;;EAEA,YAAY,kBAAkB,EAAE,eAAe,EAAE;EACjD,aAAa,iBAAiB,EAAE;;EAEhC,gBAAgB,aAAa,EAAE;;EAE/B,cAAc,sBAAsB,EAAE;EACtC,uBAAuB,WAAW,EAAE;;EAEpC;IACE,UAAU;IACV,qBAAqB,EAAE,cAAc;EACvC;;EAEA;IACE,SAAS;IACT,YAAY;IACZ,WAAW;IACX,SAAS;IACT,2BAA2B;IAC3B,kBAAkB;EACpB;;EAEA;IACE,WAAW;EACb;AACF;AACA,sCAAsC;AACtC;EACE,eAAe;EACf,MAAM,EAAE,OAAO,EAAE,WAAW,EAAE,aAAa;EAC3C,8BAA8B,EAAE,uBAAuB;EACvD,0BAA0B,OAAO,8BAA8B;EAC/D,aAAa;EACb,aAAa;EACb,uBAAuB;EACvB,mBAAmB;EACnB,2BAA2B;AAC7B;;AAEA;EACE,iCAAiC,EAAE,iBAAiB;EACpD,YAAY;EACZ,cAAc;EACd,aAAa;EACb,mBAAmB;EACnB,0CAA0C;EAC1C,gDAAgD;EAChD,YAAY;AACd;;AAEA;EACE,aAAa;EACb,8BAA8B;EAC9B,mBAAmB;EACnB,mBAAmB;EACnB,oBAAoB;EACpB,iDAAiD;AACnD;;AAEA;EACE,iBAAiB;EACjB,gBAAgB;EAChB,mBAAmB;AACrB;;AAEA;EACE,uBAAuB;EACvB,YAAY;EACZ,+BAA+B;EAC/B,iBAAiB;EACjB,eAAe;EACf,gBAAgB;AAClB;AACA,mBAAmB,YAAY,EAAE,wBAAwB,EAAE;;AAE3D,mBAAmB;AACnB;EACE,aAAa;EACb,mBAAmB;EACnB,8BAA8B;EAC9B,qBAAqB;AACvB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,SAAS;AACX;;AAEA,cAAc,iBAAiB,EAAE;AACjC,cAAc,eAAe,EAAE,gBAAgB,EAAE;AACjD,cAAc,iBAAiB,EAAE,+BAA+B,EAAE;;AAElE,kCAAkC;AAClC;EACE,WAAW,EAAE,YAAY;EACzB,kBAAkB;EAClB,YAAY;EACZ,oCAAoC;EACpC,YAAY;EACZ,eAAe;EACf,aAAa,EAAE,mBAAmB,EAAE,uBAAuB;EAC3D,yBAAyB;AAC3B;;AAEA,yBAAyB,oCAAoC,EAAE;;AAE/D,yBAAyB;AACzB;EACE,mBAAmB,EAAE,iBAAiB;EACtC,cAAc,OAAO,cAAc;EACnC,4CAA4C;AAC9C;;AAEA,yBAAyB;AACzB;EACE,gBAAgB;EAChB,8BAA8B;EAC9B,aAAa;EACb,mBAAmB;AACrB;;AAEA;EACE,WAAW;EACX,WAAW;EACX,gBAAgB;EAChB,wBAAwB;EACxB,oCAAoC;EACpC,mBAAmB;EACnB,

@@ -13,7 +13,7 @@ export default function LandingPage({ onStart }) {
       
       <div className="landing-content">
         <div className="logo-container">
-          <Leaf className="logo-icon" size={40} />
+          <Leaf className="logo-icon" size={40} style={{ color: '#4CAF50' }} />
           <h1>AuraLeaf</h1>
         </div>
         

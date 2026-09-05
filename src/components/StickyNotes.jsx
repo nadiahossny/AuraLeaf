@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Palette } from 'lucide-react';
 
-// Tinted dark glass to ensure white text is always readable against any background
-const COLORS = ['rgba(15, 23, 42, 0.85)', 'rgba(12, 74, 110, 0.85)', 'rgba(20, 83, 45, 0.85)', 'rgba(88, 28, 135, 0.85)'];
+// Pastel sticky note colors
+const COLORS = ['rgba(254, 240, 138, 0.95)', 'rgba(187, 247, 208, 0.95)', 'rgba(191, 219, 254, 0.95)', 'rgba(251, 207, 232, 0.95)'];
 
 function SidebarNote({ note, updateNote, deleteNote, changeColor }) {
   const [showColors, setShowColors] = useState(false);
@@ -53,12 +53,20 @@ export default function StickyNotes({ onClose }) {
     const saved = localStorage.getItem('auraleaf-notes');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Migrate old dark colors to new pastel colors
+        return parsed.map(note => {
+          if (note.color === 'rgba(15, 23, 42, 0.85)') return { ...note, color: COLORS[0] };
+          if (note.color === 'rgba(12, 74, 110, 0.85)') return { ...note, color: COLORS[1] };
+          if (note.color === 'rgba(20, 83, 45, 0.85)') return { ...note, color: COLORS[2] };
+          if (note.color === 'rgba(88, 28, 135, 0.85)') return { ...note, color: COLORS[3] };
+          return note;
+        });
       } catch (e) {
         return [];
       }
     }
-    return [{ id: 1, text: '', color: COLORS[0] }];
+    return [{ id: 1, text: '', color: COLORS[1] }];
   });
   
 
@@ -68,7 +76,7 @@ export default function StickyNotes({ onClose }) {
 
 
   const addNote = () => {
-    setNotes([...notes, { id: Date.now(), text: '', color: COLORS[0] }]);
+    setNotes([...notes, { id: Date.now(), text: '', color: COLORS[1] }]);
   };
 
   const updateNote = (id, text) => {

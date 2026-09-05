@@ -816,7 +816,6 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.2s;
-  background-image: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
   touch-action: none;
 }
 .sticky-note:hover {
@@ -829,9 +828,17 @@ a:focus-visible {
   align-items: center;
   margin-bottom: 0.8rem;
   cursor: grab;
-  color: rgba(255,255,255,0.7);
+  color: #1e293b;
 }
 .note-header:active { cursor: grabbing; }
+
+.sticky-note .btn-icon {
+  color: rgba(30,41,59,0.7);
+}
+.sticky-note .btn-icon:hover {
+  color: #1e293b;
+  background: rgba(0,0,0,0.1);
+}
 
 .note-actions {
   display: flex;
@@ -906,15 +913,15 @@ a:focus-visible {
   outline: none;
   font-family: inherit;
   font-size: 1.05rem;
-  color: white;
+  color: #1e293b;
   line-height: 1.5;
   width: 100%;
 }
-.note-textarea::placeholder { color: rgba(255,255,255,0.6); }
+.note-textarea::placeholder { color: rgba(30,41,59,0.5); }
 
 /* Update drag handle for contrast */
 .drag-handle { transition: color 0.2s; }
-.note-header:hover .drag-handle { color: white; }
+.note-header:hover .drag-handle { color: #1e293b; }
 
 
 /* --- DOCK MINIMIZED --- */
@@ -1366,9 +1373,106 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+}
+
+/* Ensure sticky notes stack properly inside the sidebar */
+.notes-sidebar-container .sticky-note {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* --- UX TEARDOWN STYLES --- */
+
+/* Dim Overlay for Active Session */
+.dim-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 0; /* Just above the background, below content */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-in-out;
+}
+.dim-overlay.active {
+  opacity: 1;
+}
+
+/* Top Left Branding Badge */
+.header-brand-badge {
+  position: fixed;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  transition: background 0.2s, transform 0.2s, opacity 0.5s ease;
+  z-index: 1000;
+}
+.header-brand-badge:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.05);
+}
+
+/* Overflow Menu */
+.overflow-menu-container {
+  position: relative;
+}
+@keyframes popupFadeIn {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.overflow-menu-popup {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  animation: popupFadeIn 0.2s ease;
+  z-index: 1001;
+}
+
+.overflow-menu-popup .dock-btn {
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.5rem;
+}
+.overflow-menu-popup .dock-btn span {
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Extreme Minimalism (Do Not Disturb) */
+.dnd-active.focus-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.dnd-active .timer-tabs,
+.dnd-active .timer-controls-minimal,
+.dnd-active .btn-minimize,
+.dnd-active .current-focus-task,
+.dnd-active .sessions-counter {
+  display: none !important;
 }
 
 @media (max-width: 768px) {

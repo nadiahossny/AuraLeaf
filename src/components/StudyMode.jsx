@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import NoiseMenu from "./NoiseMenu";
 import Timer from "./Timer";
 import Sidebar from "./Sidebar";
-import { StickyNote, Minimize2, Maximize2, Droplets, RotateCcw, ListTodo, Moon, Leaf, MoreHorizontal, MonitorPlay } from 'lucide-react';
+import { StickyNote, Minimize2, Maximize2, Droplets, RotateCcw, ListTodo, Moon, MoreHorizontal, MonitorPlay } from 'lucide-react';
 import YouTubeWidget from "./YouTubeWidget";
 
 // Import audio files
@@ -12,33 +12,35 @@ import forestS from '../assets/sounds/forest.mp3';
 import oceanS from '../assets/sounds/ocean.mp3';
 import brownS from '../assets/sounds/brown.mp3';
 
-// Import bg images
 import mountainBg from '../assets/mountain.jpg';
 import oceanBg from '../assets/ocean.jpg';
 import forestBg from '../assets/forest.jpg';
 import rainBg from '../assets/rain.jpg';
 
-import mountainIcon from '../assets/snow-capped.svg';
-import oceanIcon from '../assets/wave.svg';
-import forestIcon from '../assets/evergreen.svg';
-import rainIcon from '../assets/cloud.svg';
-import speakerIcon from '../assets/speaker.svg';
-import highVolumeIcon from '../assets/high-volume.svg';
-import headphoneIcon from '../assets/headphone.svg';
+import { 
+  MountainSnow, 
+  Waves, 
+  TreePine, 
+  CloudRain, 
+  VolumeX, 
+  Volume2, 
+  Headphones, 
+  Leaf 
+} from 'lucide-react';
 
 const SCENES = {
-  mountain: { id: 'mountain', soundId: 'mountain', label: 'Mountain', icon: mountainIcon, image: mountainBg, overlay: 'rgba(0,0,0,0.4)' },
-  ocean:    { id: 'ocean',    soundId: 'ocean', label: 'Ocean', icon: oceanIcon, image: oceanBg, overlay: 'rgba(0,0,0,0.4)' },
-  forest:   { id: 'forest',   soundId: 'forest', label: 'Forest', icon: forestIcon, image: forestBg, overlay: 'rgba(0,0,0,0.4)' },
-  rain:     { id: 'rain',     soundId: 'rain', label: 'Rain',   icon: rainIcon, image: rainBg, overlay: 'rgba(0,0,0,0.5)' } 
+  mountain: { id: 'mountain', soundId: 'mountain', label: 'Mountain', icon: MountainSnow, image: mountainBg, overlay: 'rgba(0,0,0,0.4)' },
+  ocean:    { id: 'ocean',    soundId: 'ocean', label: 'Ocean', icon: Waves, image: oceanBg, overlay: 'rgba(0,0,0,0.4)' },
+  forest:   { id: 'forest',   soundId: 'forest', label: 'Forest', icon: TreePine, image: forestBg, overlay: 'rgba(0,0,0,0.4)' },
+  rain:     { id: 'rain',     soundId: 'rain', label: 'Rain',   icon: CloudRain, image: rainBg, overlay: 'rgba(0,0,0,0.5)' } 
 };
 
 const NOISES = [
-  { id: 'brown', title: 'White/Brown Noise', icon: headphoneIcon, desc: 'Maximum focus' },
-  { id: 'mountain', title: 'Mountain Wind Noise', icon: mountainIcon, desc: 'For deep focus' },
-  { id: 'ocean', title: 'Ocean Waves', icon: oceanIcon, desc: 'Soothing' },
-  { id: 'forest', title: 'Forest Bird Noise', icon: forestIcon, desc: 'Calming' },
-  { id: 'rain', title: 'Rainfall', icon: rainIcon, desc: 'Relaxing' }
+  { id: 'brown', title: 'White/Brown Noise', icon: Headphones, desc: 'Maximum focus' },
+  { id: 'mountain', title: 'Mountain Wind Noise', icon: MountainSnow, desc: 'For deep focus' },
+  { id: 'ocean', title: 'Ocean Waves', icon: Waves, desc: 'Soothing' },
+  { id: 'forest', title: 'Forest Bird Noise', icon: TreePine, desc: 'Calming' },
+  { id: 'rain', title: 'Rainfall', icon: CloudRain, desc: 'Relaxing' }
 ];
 
 const WaterRippleBackground = ({ imageUrl, overlay, isRippleEnabled }) => {
@@ -135,7 +137,21 @@ export default function StudyMode({ name, onExit }) {
   const audioRefs = useRef(null);
   const activityTimeoutRef = useRef(null);
 
+  // Handle click outside to close overflow menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // If the dock exists and the click is outside of it
+      if (dockRef.current && !dockRef.current.contains(event.target)) {
+        setShowOverflow(false); // Close the overflow menu
+        // setIsDockMinimized(true); // Can uncomment if we want the dock to fully minimize
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Zen Mode Activity Detection
   useEffect(() => {
@@ -285,7 +301,7 @@ export default function StudyMode({ name, onExit }) {
         style={{ opacity: isChromeHidden ? 0 : 1, pointerEvents: isChromeHidden ? 'none' : 'auto', cursor: 'pointer' }}
         title="End Session"
       >
-        <Leaf size={20} className="logo-icon" color="#4ade80" />
+        <Leaf className="logo-icon" size={20} style={{ marginRight: '8px' }} />
         AuraLeaf
       </div>
 
@@ -320,19 +336,19 @@ export default function StudyMode({ name, onExit }) {
                 
                 {/* Ambience Toggle */}
                 <button className="dock-btn" onClick={cycleAmbience} title="Cycle Ambience">
-                  <img src={SCENES[currentScene].icon} alt="Ambience" className="dock-icon" style={{ width: '1em', height: '1em' }} />
+                  {React.createElement(SCENES[currentScene].icon, { className: "dock-icon-lucide", size: 22 })}
                 </button>
 
                 <div className="dock-divider"></div>
 
                 {/* Controller */}
                 <button className={`dock-btn ${menuOpen ? 'active' : ''}`} onClick={() => setMenuOpen(!menuOpen)} title="Sound Controller">
-                  <img src={headphoneIcon} alt="Controller" className="dock-icon" style={{ width: '1.2em', height: '1.2em' }} />
+                  <Headphones className="dock-icon-lucide" size={22} />
                 </button>
 
                 {/* Mute */}
                 <button className={`dock-btn ${isMuted ? 'active' : ''}`} onClick={toggleMute} title={isMuted ? 'Unmute' : 'Mute All'}>
-                  <img src={isMuted ? speakerIcon : highVolumeIcon} alt={isMuted ? 'Unmute' : 'Mute'} className="dock-icon" style={{ width: '1em', height: '1em' }} />
+                  {isMuted ? <VolumeX className="dock-icon-lucide" size={22} /> : <Volume2 className="dock-icon-lucide" size={22} />}
                 </button>
 
                 <div className="dock-divider"></div>
