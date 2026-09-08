@@ -1,6 +1,6 @@
 # AuraLeaf 🍃
 
-AuraLeaf is a beautifully crafted, immersive study companion and ambient focus environment. Originally conceived as a heartfelt birthday gift experience, it has evolved into a fully-fledged productivity tool designed to create a peaceful and customizable workspace.
+AuraLeaf is a beautifully crafted, immersive study companion and ambient focus environment. A fully-fledged productivity tool designed to create a peaceful and customizable workspace.
 
 ![AuraLeaf Preview](src/assets/5.png)
 
