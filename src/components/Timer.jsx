@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, RotateCcw, Minimize2, Plus, Minus } from 'lucide-react';
 import Draggable from 'react-draggable';
+import { useAdaptiveDevice } from '../hooks/useAdaptiveDevice';
 
-export default function Timer({ resetKey, onTimerStateChange, isManualZenMode }) {
+export default function Timer({
+  resetKey,
+  onTimerStateChange,
+  isManualZenMode,
+  onOpenTodo,
+}) {
+  const { isMobile, isTouchDevice } = useAdaptiveDevice();
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -22,7 +29,7 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
       if (saved) {
         try {
           const tasks = JSON.parse(saved);
-          const firstIncomplete = tasks.find(t => !t.completed);
+          const firstIncomplete = tasks.find((t) => !t.completed);
           setCurrentTask(firstIncomplete ? firstIncomplete.text : null);
         } catch (e) {}
       }
@@ -32,13 +39,12 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
     return () => window.removeEventListener('todos-updated', fetchTask);
   }, []);
 
-  // Force DOM transform reset when resetKey changes, 
-  // because react-draggable might read the old nodeRef before React commits the new DOM node.
+  // Force DOM transform reset when resetKey changes or when entering mobile adaptive layout
   useEffect(() => {
     if (nodeRef.current) {
       nodeRef.current.style.transform = 'translate(0px, 0px)';
     }
-  }, [resetKey]);
+  }, [resetKey, isMobile]);
 
   // Notify parent of timer state
   useEffect(() => {
@@ -52,30 +58,30 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
       const ctx = new AudioContext();
-      
+
       const playTone = (freq, startTime, duration) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
-        
+
         osc.type = 'sine';
         osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
-        
+
         // Soft attack, long decay for a bell-like sound
         gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
         gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + startTime + 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
-        
+
         osc.start(ctx.currentTime + startTime);
         osc.stop(ctx.currentTime + startTime + duration);
       };
 
       // Play a soft, relaxing chord (C Major)
-      playTone(523.25, 0, 2.0);   // C5
+      playTone(523.25, 0, 2.0); // C5
       playTone(659.25, 0.15, 2.5); // E5
-      playTone(783.99, 0.3, 3.0);  // G5
-    } catch(e) {
+      playTone(783.99, 0.3, 3.0); // G5
+    } catch (e) {
       console.log('Audio API not supported');
     }
   };
@@ -89,7 +95,7 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
             setIsActive(false);
             playChime();
             if (mode === 'focus') {
-              setSessionsCompleted(prev => prev + 1);
+              setSessionsCompleted((prev) => prev + 1);
             }
           } else {
             setMinutes(minutes - 1);
@@ -105,7 +111,7 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
     return () => clearInterval(interval);
   }, [isActive, seconds, minutes, mode]);
 
-  const toggleTimer = React.useCallback(() => setIsActive(prev => !prev), []);
+  const toggleTimer = React.useCallback(() => setIsActive((prev) => !prev), []);
 
   const resetTimer = React.useCallback(() => {
     setIsActive(false);
@@ -121,7 +127,7 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
     setSeconds(0);
   };
 
-  // Global Keyboard Shortcuts
+  // Global Keyboard Shortcuts (Desktop / Hardware Keyboards)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
@@ -133,58 +139,93 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
         resetTimer();
       }
     };
-    
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [toggleTimer, resetTimer]);
 
+  const playTitle = isActive
+    ? 'Pause'
+    : isTouchDevice || isMobile
+      ? 'Start Timer'
+      : 'Start (Space)';
+  const resetTitle = isTouchDevice || isMobile ? 'Reset Timer' : 'Reset (R)';
+
   return (
-    <Draggable 
-      key={resetKey}
-      nodeRef={nodeRef} 
-      cancel=".btn-minimize, .timer-tab, .btn-minimal-play, .btn-minimal-reset" 
+    <Draggable
+      key={`${resetKey}-${isMobile ? 'mobile' : 'desktop'}`}
+      nodeRef={nodeRef}
+      disabled={isMobile}
+      cancel=".btn-minimize, .timer-tab, .btn-minimal-play, .btn-minimal-reset, .btn-icon, .current-focus-task"
       bounds="body"
-      onDrag={() => { isDraggingRef.current = true; }}
-      onStop={() => { setTimeout(() => { isDraggingRef.current = false; }, 50); }}
+      onDrag={() => {
+        isDraggingRef.current = true;
+      }}
+      onStop={() => {
+        setTimeout(() => {
+          isDraggingRef.current = false;
+        }, 50);
+      }}
     >
       {isMinimized ? (
-        <div ref={nodeRef} className="focus-card-minimized" onClick={() => { if (!isDraggingRef.current) setIsMinimized(false); }}>
+        <div
+          ref={nodeRef}
+          className={`focus-card-minimized ${isMobile ? 'mobile-anchored-pill' : ''}`}
+          onClick={() => {
+            if (!isDraggingRef.current) setIsMinimized(false);
+          }}
+        >
           <div className="timer-minimized-time">
             {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
           </div>
-          <button 
-            className="btn-play-toggle" 
-            style={{ width: '30px', height: '30px' }}
-            onClick={(e) => { e.stopPropagation(); toggleTimer(); }}
+          <button
+            className="btn-play-toggle"
+            style={{ width: '32px', height: '32px' }}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTimer();
+            }}
+            aria-label={isActive ? 'Pause timer' : 'Start timer'}
           >
             {isActive ? <Pause size={14} /> : <Play size={14} style={{ marginLeft: '2px' }} />}
           </button>
         </div>
       ) : (
-        <div ref={nodeRef} className={`focus-card ${isManualZenMode ? 'dnd-active' : ''}`}>
-          <button className="btn-minimize" onClick={() => setIsMinimized(true)} title="Minimize Timer">
+        <div
+          ref={nodeRef}
+          className={`focus-card ${isManualZenMode ? 'dnd-active' : ''} ${
+            isMobile ? 'focus-card-mobile-adaptive' : ''
+          }`}
+          data-adaptive-mode={isMobile ? 'mobile-anchored' : 'desktop-draggable'}
+        >
+          <button
+            className="btn-minimize"
+            onClick={() => setIsMinimized(true)}
+            title="Minimize Timer"
+            aria-label="Minimize Timer"
+          >
             <Minimize2 size={20} />
           </button>
 
           <div className="timer-tabs">
-            <button 
+            <button
               className={`timer-tab ${mode === 'focus' ? 'active' : ''}`}
               onClick={() => handleTabClick('focus')}
             >
               Focus
             </button>
-            <button 
+            <button
               className={`timer-tab ${mode === 'rest' ? 'active' : ''}`}
               onClick={() => handleTabClick('rest')}
             >
               Short Break
             </button>
           </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+
+          <div className="timer-readout-row">
             {!isActive && (
-              <button 
-                className="btn-icon" 
+              <button
+                className="btn-icon timer-step-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   let current = mode === 'focus' ? customFocusTime : customRestTime;
@@ -193,20 +234,21 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
                   else setCustomRestTime(newMins);
                   setMinutes(newMins);
                   setSeconds(0);
-                }} 
+                }}
                 title="Decrease 5m"
+                aria-label="Decrease 5 minutes"
               >
                 <Minus size={24} />
               </button>
             )}
-            
+
             <div className="timer-display">
               {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
             </div>
 
             {!isActive && (
-              <button 
-                className="btn-icon" 
+              <button
+                className="btn-icon timer-step-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   let current = mode === 'focus' ? customFocusTime : customRestTime;
@@ -215,8 +257,9 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
                   else setCustomRestTime(newMins);
                   setMinutes(newMins);
                   setSeconds(0);
-                }} 
+                }}
                 title="Increase 5m"
+                aria-label="Increase 5 minutes"
               >
                 <Plus size={24} />
               </button>
@@ -224,23 +267,41 @@ export default function Timer({ resetKey, onTimerStateChange, isManualZenMode })
           </div>
 
           {currentTask && mode === 'focus' && (
-            <div className="current-focus-task" style={{ margin: '0.5rem 0 1.5rem 0', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.1)', borderRadius: '50px', display: 'inline-block', maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              <span style={{opacity: 0.6, fontSize: '0.9rem', marginRight: '8px'}}>Focusing on:</span>
-              <strong style={{ fontWeight: 500, letterSpacing: '0.5px' }}>{currentTask}</strong>
+            <div
+              className="current-focus-task"
+              onClick={() => {
+                if (onOpenTodo) onOpenTodo();
+              }}
+              role={onOpenTodo ? 'button' : undefined}
+              tabIndex={onOpenTodo ? 0 : undefined}
+              title={onOpenTodo ? 'View tasks' : undefined}
+            >
+              <span className="current-focus-label">Focusing on:</span>
+              <strong className="current-focus-value">{currentTask}</strong>
             </div>
           )}
 
           <div className="timer-controls-minimal">
-            <button className="btn-minimal-play" onClick={toggleTimer} title={isActive ? 'Pause' : 'Start (Space)'}>
+            <button
+              className="btn-minimal-play"
+              onClick={toggleTimer}
+              title={playTitle}
+              aria-label={playTitle}
+            >
               {isActive ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: '4px' }} />}
             </button>
-            <button className="btn-minimal-reset" onClick={resetTimer} title="Reset (R)">
+            <button
+              className="btn-minimal-reset"
+              onClick={resetTimer}
+              title={resetTitle}
+              aria-label={resetTitle}
+            >
               <RotateCcw size={24} />
             </button>
           </div>
 
           {sessionsCompleted > 0 && (
-            <div className="sessions-counter" style={{ marginTop: '1.5rem', opacity: 0.6, fontSize: '0.9rem', letterSpacing: '1px' }}>
+            <div className="sessions-counter">
               Sessions today: {sessionsCompleted}
             </div>
           )}
